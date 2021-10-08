@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Document</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+</head>
+<body>
+    <h1>채팅 방 입니다</h1>
+	<button onclick="connectWs()" id="startBtn"> 채팅 시작하기</button>
+	<input id="chatting"></input><button onclick="send()"> 보내기 </button>
+	<div>
+        <p id="chat"></p>
+	</div>
+    <button onclick="agree()" >찬성</button>
+    <button onclick="disagree()" >반대</button>
+    <button onclick="divide()" >구분선</button>
+    <div id="ctn"></div>
+
+    <script type="text/javascript">
+
+        var ws;
+        function connectWs() {
+            ws = new WebSocket('ws://' + location.host + '/chat');
+            ws.onmessage = function(data) {
+                console.log(data.data);
+                $("<p>"+data.data+"</p>").prependTo('#chat');
+            }
+
+            $('#startBtn').hide();
+        }
+
+        function send() {
+            ws.send($("#chatting").val());
+            $('#chatting').val("");
+        }
+
+        function agree() {
+            ws.send("찬성");
+        }
+        function disagree() {
+            ws.send("반대");
+        }
+        function divide() {
+            ws.send("------------------");
+        }
+
+    </script>
+    
+</body>
+</html>
