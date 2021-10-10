@@ -10,6 +10,7 @@
 </head>
 <body>
     <h1>채팅 방 입니다</h1>
+    <p id="ctn"></p>
 	<button onclick="connectWs()" id="startBtn"> 채팅 시작하기</button>
 	<input id="chatting"></input><button onclick="send()"> 보내기 </button>
 	<div>
@@ -26,8 +27,12 @@
         function connectWs() {
             ws = new WebSocket('ws://' + location.host + '/chat');
             ws.onmessage = function(data) {
-                console.log(data.data);
-                $("<p>"+data.data+"</p>").prependTo('#chat');
+                var json = JSON.parse(data.data);
+                console.log(json.count);
+                // $("<p>"+data.data+"</p>").prependTo('#chat');
+                $("<p>"+json.payload+"</p>").prependTo('#chat');
+                $("#ctn").text("");
+                $("#ctn").text(":"+json.count);
             }
 
             $('#startBtn').hide();
