@@ -2,7 +2,6 @@ package com.example.vote.Service;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Map;
 
 import com.example.vote.Model.Information;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -31,18 +30,22 @@ public class SocketTextHandler extends TextWebSocketHandler {
 
 		try {
 
-			this.count += 1;
-			String html = "<h1>수:</h1>";
-			Map<String, String> map = new HashMap<>();
+			if(payload.equals("#this#divide#payload")){
+				this.count = 0;
+				payload = "------------------------";
+			}
+			else {
+				this.count += 1;
+			}
 
-			map.put("ctn", count.toString());
-			map.put("payload", payload);
+			if(payload.equals("#this#reset#count")){
+				this.count = 0;
+				payload = "";
+			}
 
 			Information info = new Information();
-
 			info.setCount(this.count);
 			info.setPayload(payload);
-
 			ObjectMapper objectMapper = new ObjectMapper();
 
 			// 접속된 모든 세션에 메시지 전송
@@ -52,7 +55,6 @@ public class SocketTextHandler extends TextWebSocketHandler {
 				ss.sendMessage(new TextMessage(objectMapper.writeValueAsString(info)));
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

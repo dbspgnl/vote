@@ -9,17 +9,21 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 </head>
 <body>
-    <h1>채팅 방 입니다</h1>
-    <p id="ctn"></p>
+    <div>
+        <p><h1>투표자</h1></p>
+        <p id="ctn" th:text="':0'"></p>
+    </div>
+    <div>
+        <button onclick="agree()" >찬성</button>
+        <button onclick="disagree()" >반대</button>
+        <button onclick="divide()" >구분선</button>
+        <button onclick="reset()" >초기화</button>
+    </div>
 	<button onclick="connectWs()" id="startBtn"> 채팅 시작하기</button>
 	<input id="chatting"></input><button onclick="send()"> 보내기 </button>
 	<div>
         <p id="chat"></p>
 	</div>
-    <button onclick="agree()" >찬성</button>
-    <button onclick="disagree()" >반대</button>
-    <button onclick="divide()" >구분선</button>
-    <div id="ctn"></div>
 
     <script type="text/javascript">
 
@@ -50,7 +54,10 @@
             ws.send("반대");
         }
         function divide() {
-            ws.send("------------------");
+            ws.send("#this#divide#payload");
+        }
+        function reset() {
+            ws.send("#this#reset#count");
         }
 
     </script>
