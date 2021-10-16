@@ -12,4 +12,14 @@ public class MainController {
         return "index";
     }
 
+    @RequestMapping(value = "/chat")
+    public String chat() {
+        return "chat";
+    }
+
+    @RequestMapping(value = "/avalon")
+    public String avalon() {
+        return "avalon";
+    }
+
 }

@@ -13,25 +13,39 @@
 <body>
     <div class="card p-3">
         <div>
-            <p><h1>메뉴</h1></p>
+            <p><h1>채팅방</h1></p>
         </div>
-        <div class="mb-3">
-            <button class="btn btn-primary" onclick="chat()" >채팅방</button>
+        <div>
+            <button class="btn btn-warning" onclick="connectWs()" id="startBtn"> 시작하기</button>
         </div>
-        <div class="mb-3">
-            <button class="btn btn-danger" onclick="avalon()" >아발론</button>
+        <br/>
+        <div>메시지: </div><input id="chatting"></input>&nbsp;&nbsp;<button class="btn btn-success" onclick="send()">보내기 </button>
+        <hr/>
+        <div>
+            <p id="chat"></p>
         </div>
-        
     </div>
     <script type="text/javascript">
 
-        function chat() {
-            location.href="/chat";
+        var ws;
+        function connectWs() {
+            ws = new WebSocket('ws://' + location.host + '/chat');
+            ws.onmessage = function(data) {
+                var json = JSON.parse(data.data);
+                console.log(json.count);
+                $("<p>"+data.data+"</p>").prependTo('#chat');
+
+            }
+
+            $('#startBtn').hide();
         }
 
-        function avalon() {
-            location.href="/avalon";
+        function send() {
+            ws.send($("#chatting").val());
+            $('#chatting').val("");
         }
+
+
 
     </script>
     
