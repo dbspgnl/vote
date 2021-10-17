@@ -22,19 +22,51 @@
             <button class="btn btn-secondary" onclick="divide()" >구분선</button>
             <button class="btn btn-secondary" onclick="reset()" >초기화</button>
             <button class="btn btn-warning" onclick="connectWs()" id="startBtn"> 시작하기</button>
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                인원설정
+            </button>
         </div>
-        <br/>
-        <div>메시지: </div><input id="chatting"></input>&nbsp;&nbsp;<button class="btn btn-success" onclick="send()">보내기 </button>
+
         <hr/>
         <div>
             <p id="chat"></p>
         </div>
     </div>
+
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+            ...
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary">Understood</button>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    
     <script type="text/javascript">
 
         var ws;
         function connectWs() {
-            ws = new WebSocket('ws://' + location.host + '/chat');
+            ws = new WebSocket('ws://' + location.host + '/avalon/message');
+
+            setInterval(function() {
+                var d = new Date();
+                var json = {};
+                json.d = d;
+                json.type = "시간";
+                console.log(json);
+                ws.send("세션 유지: "+json);
+            }, 10000); // 10초
+
             ws.onmessage = function(data) {
                 var json = JSON.parse(data.data);
                 console.log(json.count);
@@ -47,10 +79,7 @@
             $('#startBtn').hide();
         }
 
-        function send() {
-            ws.send($("#chatting").val());
-            $('#chatting').val("");
-        }
+        
 
         function agree() {
             ws.send("찬성");

@@ -25,16 +25,14 @@
             <p id="chat"></p>
         </div>
     </div>
+
     <script type="text/javascript">
 
         var ws;
         function connectWs() {
             ws = new WebSocket('ws://' + location.host + '/chat/message');
             ws.onmessage = function(data) {
-                var json = JSON.parse(data.data);
-                console.log(json.count);
                 $("<p>"+data.data+"</p>").prependTo('#chat');
-
             }
 
             $('#startBtn').hide();

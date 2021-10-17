@@ -25,7 +25,7 @@ public class SocketTextHandler extends TextWebSocketHandler {
 		String payload = message.getPayload();
 
 		try {
-			System.out.println(payload);
+			System.out.println("chat: "+payload);
 			for (String key : sessions.keySet()) {
 				WebSocketSession ss = sessions.get(key);
 				ss.sendMessage(new TextMessage(payload));
