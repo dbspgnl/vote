@@ -14,16 +14,16 @@
     <div class="card p-3">
         <div>
             <p><h1>투표자</h1></p>
-            <p id="ctn" th:text="':0'"></p>
         </div>
         <div>
-            <button class="btn btn-primary" onclick="agree()" >찬성</button>
-            <button class="btn btn-danger" onclick="disagree()" >반대</button>
-            <button class="btn btn-secondary" onclick="divide()" >구분선</button>
+
             <button class="btn btn-secondary" onclick="reset()" >초기화</button>
             <button class="btn btn-warning" onclick="connectWs()" id="startBtn"> 시작하기</button>
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#setPlayerCtnModal">
                 인원설정
+            </button>
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#toVote">
+                투표하기
             </button>
         </div>
 
@@ -33,20 +33,38 @@
         </div>
     </div>
 
-    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal fade" id="setPlayerCtnModal" data-bs-backdrop="static" data-bs-keyboard="false" t
+        abindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-            <h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
+            <h5 class="modal-title" id="staticBackdropLabel">인원 설정창</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-            ...
+                <input type="text" name="" id="setPlayerCtn">
             </div>
             <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary">Understood</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                <button type="button" class="btn btn-primary" onclick="setPlayerCtn()">설정</button>
             </div>
+        </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="toVote" data-bs-backdrop="static" data-bs-keyboard="false" 
+        tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title" id="staticBackdropLabel">투표창</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <button class="btn btn-primary" onclick="agree()" >찬성</button>
+                <button class="btn btn-danger" onclick="disagree()" >반대</button>
+            </div>
+
         </div>
         </div>
     </div>
@@ -60,20 +78,29 @@
 
             setInterval(function() {
                 var d = new Date();
-                var json = {};
-                json.d = d;
-                json.type = "시간";
-                console.log(json);
-                ws.send("세션 유지: "+json);
+                ws.send("#sessionTime: "+d);
             }, 10000); // 10초
 
             ws.onmessage = function(data) {
                 var json = JSON.parse(data.data);
-                console.log(json.count);
-                // $("<p>"+data.data+"</p>").prependTo('#chat');
-                $("<p>"+json.payload+"</p>").prependTo('#chat');
-                $("#ctn").text("");
-                $("#ctn").text(":"+json.count);
+                var result = json.payload;
+                console.log(data.data);
+                console.log(result);
+                if(result == "#Success"){
+                    var sentence = `<div class="alert alert-success" role="alert">성공!!</div>`
+                    $("#chat").prepend(sentence);
+                }
+                if(result == "#Failure"){
+                    var sentence = `<div class="alert alert-danger" role="alert">실패!!</div>`
+                    $("#chat").prepend(sentence);
+                }
+                if(result == "#toVoteReset"){
+                    $("#chat").empty();
+                }
+
+                // $("<p>"+json.payload+"</p>").prependTo('#chat');
+                // $("#ctn").text("");
+                // $("#ctn").text(":"+json.count);
             }
 
             $('#startBtn').hide();
@@ -82,16 +109,23 @@
         
 
         function agree() {
-            ws.send("찬성");
+            $('#toVote').modal('hide')
+            ws.send("#toVoteAgree");
         }
         function disagree() {
-            ws.send("반대");
+            $('#toVote').modal('hide')
+            ws.send("#toVoteDisagree");
         }
-        function divide() {
-            ws.send("#this#divide#payload");
-        }
+
         function reset() {
-            ws.send("#this#reset#count");
+            $("#chat").empty();
+            ws.send("#toVoteReset");
+        }
+        function setPlayerCtn() {
+            var num = $("#setPlayerCtn").val();
+            // alert(num);
+            $('#setPlayerCtnModal').modal('hide')
+            ws.send("#setPlayerCtnModal:"+num);
         }
 
     </script>

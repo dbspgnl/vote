@@ -6,10 +6,6 @@ import java.util.HashMap;
 import com.example.vote.Model.Information;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -24,6 +20,8 @@ public class SocketAvalonService extends TextWebSocketHandler {
 
 	private Integer playerCtn = 0;
 	private Integer setPlayerCtn = 0;
+	private Integer agreeCtn = 0;
+	private Integer disagreeCtn = 0;
 	// private String player1;
 	// private String player2;
 	// private String player3;
@@ -41,40 +39,59 @@ public class SocketAvalonService extends TextWebSocketHandler {
 	@Override
 	public void handleTextMessage(WebSocketSession session, TextMessage message) {
 		String payload = message.getPayload();
-		System.out.println("==>avalon: "+payload);
-		
-		JSONParser parser  = new JSONParser();
-		// String json1 = "{\"name\":\"Dave\", \"nationality\":\"korea\"}";
-		try {
-			parser.parse(payload);
-			// Object object = (JSONObject)parser.parse(parser);
-		// 	if (object instanceof JSONArray) {
-		// 		JSONArray jsonArray = (JSONArray)object;
-		// 		// jsonArray 클래스를 이용한 처리
-		// 	}
-		// 	else if (object instanceof JSONObject) {
-		// 		JSONObject jsonObject = (JSONObject)object;
-		// 		// jsonObject 클래스를 이용한 처리
-		// 	}
-		// 	System.out.println("==>object: "+object);
-		} catch (ParseException e1) {
-		// 	// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
 		
 		try {
+			System.out.println(payload);
 
-			if(payload.equals("#this#divide#payload")){
+			// 세션 확인
+			if(payload.contains("#sessionTime")){
+				// System.out.println(payload);
+				return;
+			}
+
+			// 인원 설정
+			if(payload.contains("#setPlayerCtn")){
+				String numString = payload.split(":")[1];
+				Integer num = Integer.parseInt(numString);
+				setPlayerCtn = num;
+				return;
+			}
+
+			// 초기화
+			if(payload.equals("#toVoteReset")){
+				this.disagreeCtn = 0;
+				this.agreeCtn = 0;
 				this.playerCtn = 0;
-				payload = "------------------------";
+				payload = "#toVoteReset";
 			}
 			else {
-				this.playerCtn += 1;
-			}
+				// 투표
+				if(payload.equals("#toVoteAgree")){
+					this.agreeCtn =+ 1;
+					this.playerCtn =+ 1;
+				}
+				else{
+					this.disagreeCtn =+ 1;
+					this.playerCtn =+ 1;
+				}
 
-			if(payload.equals("#this#reset#count")){
-				this.playerCtn = 0;
-				payload = "";
+				System.out.println("playerCtn: "+this.playerCtn);
+				System.out.println("setPlayerCtn: "+this.setPlayerCtn);
+	
+				// 결과
+				if(this.playerCtn == this.setPlayerCtn){ // 모두 다 투표시
+					if(this.agreeCtn > this.disagreeCtn){ //성공
+						payload = "#Success";
+	
+					}
+					else{ // 실패
+						payload = "#Failure";
+					}
+					this.disagreeCtn = 0;
+					this.agreeCtn = 0;
+					this.playerCtn = 0;
+				}
+
 			}
 
 			Information info = new Information();
