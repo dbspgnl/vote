@@ -41,8 +41,8 @@ public class SocketAvalonService extends TextWebSocketHandler {
 		String payload = message.getPayload();
 		
 		try {
-			System.out.println(payload);
-
+			// System.out.println(payload);
+			
 			// 세션 확인
 			if(payload.contains("#sessionTime")){
 				// System.out.println(payload);
@@ -67,16 +67,18 @@ public class SocketAvalonService extends TextWebSocketHandler {
 			else {
 				// 투표
 				if(payload.equals("#toVoteAgree")){
-					this.agreeCtn =+ 1;
-					this.playerCtn =+ 1;
+					this.agreeCtn += 1;
+					this.playerCtn += 1;
 				}
 				else{
-					this.disagreeCtn =+ 1;
-					this.playerCtn =+ 1;
+					this.disagreeCtn += 1;
+					this.playerCtn += 1;
 				}
 
 				System.out.println("playerCtn: "+this.playerCtn);
 				System.out.println("setPlayerCtn: "+this.setPlayerCtn);
+				System.out.println("agreeCtn: "+this.agreeCtn);
+				System.out.println("disagreeCtn: "+this.disagreeCtn);
 	
 				// 결과
 				if(this.playerCtn == this.setPlayerCtn){ // 모두 다 투표시

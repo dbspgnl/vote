@@ -118,10 +118,12 @@
         }
 
         function reset() {
+            alert("초기화 되었습니다.");
             $("#chat").empty();
             ws.send("#toVoteReset");
         }
         function setPlayerCtn() {
+            alert("인원이 설정되었습니다.");
             var num = $("#setPlayerCtn").val();
             // alert(num);
             $('#setPlayerCtnModal').modal('hide')
