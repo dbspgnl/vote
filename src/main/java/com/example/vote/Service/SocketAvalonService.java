@@ -2,8 +2,9 @@ package com.example.vote.Service;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 
-import com.example.vote.Model.Information;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.springframework.stereotype.Component;
@@ -18,20 +19,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor 
 public class SocketAvalonService extends TextWebSocketHandler {
 
-	private Integer playerCtn = 0;
-	private Integer setPlayerCtn = 0;
+	private Integer totalPlayerCtn = 0;
+	private Integer voteCtn = 0;
 	private Integer agreeCtn = 0;
 	private Integer disagreeCtn = 0;
-	// private String player1;
-	// private String player2;
-	// private String player3;
-	// private String player4;
-	// private String player5;
-	// private String player6;
-	// private String player7;
-	// private String player8;
-	// private String player9;
-	// private String player0;
 	
 	HashMap<String, WebSocketSession> sessions = new HashMap<>();
 
@@ -39,74 +30,60 @@ public class SocketAvalonService extends TextWebSocketHandler {
 	@Override
 	public void handleTextMessage(WebSocketSession session, TextMessage message) {
 		String payload = message.getPayload();
-		
-		try {
-			// System.out.println(payload);
-			
-			// 세션 확인
-			if(payload.contains("#sessionTime")){
-				// System.out.println(payload);
-				return;
+		Map<String, String> mapData = new HashMap<>();
+		// System.out.println(payload);
+		try {	
+
+			//초기화
+			if(payload.equals("#reset")){
+				mapData.put("message", "Reset");
+				mapData.put("agree", "0"); 
+				mapData.put("disagree", "0"); 
+				sendMessage(mapData);
 			}
 
-			// 인원 설정
-			if(payload.contains("#setPlayerCtn")){
-				String numString = payload.split(":")[1];
-				Integer num = Integer.parseInt(numString);
-				setPlayerCtn = num;
-				return;
+			//투표
+			if(this.totalPlayerCtn != this.voteCtn){
+				switch (payload) {
+					case "#toVoteAgree":
+						this.agreeCtn += 1;
+						this.voteCtn += 1;
+						mapData.put("message", "voting"); 
+						sendMessage(mapData);
+						break;
+					case "#toVoteDisagree":
+						this.disagreeCtn += 1;
+						this.voteCtn += 1;
+						mapData.put("message", "voting"); 
+						sendMessage(mapData);
+						break;
+					default:
+						break;
+				}
 			}
 
-			// 초기화
-			if(payload.equals("#toVoteReset")){
-				this.disagreeCtn = 0;
-				this.agreeCtn = 0;
-				this.playerCtn = 0;
-				payload = "#toVoteReset";
-			}
-			else {
-				// 투표
-				if(payload.equals("#toVoteAgree")){
-					this.agreeCtn += 1;
-					this.playerCtn += 1;
+			// 결과
+			if(this.totalPlayerCtn == this.voteCtn){ 
+				if(this.agreeCtn > this.disagreeCtn){
+					mapData.put("message", "Success"); 
+					mapData.put("agree", this.agreeCtn.toString()); 
+					mapData.put("disagree", this.disagreeCtn.toString()); 
+					this.voteCtn = 0;
+					this.agreeCtn = 0;
+					this.disagreeCtn = 0;
+					sendMessage(mapData);
 				}
 				else{
-					this.disagreeCtn += 1;
-					this.playerCtn += 1;
-				}
-
-				System.out.println("playerCtn: "+this.playerCtn);
-				System.out.println("setPlayerCtn: "+this.setPlayerCtn);
-				System.out.println("agreeCtn: "+this.agreeCtn);
-				System.out.println("disagreeCtn: "+this.disagreeCtn);
-	
-				// 결과
-				if(this.playerCtn == this.setPlayerCtn){ // 모두 다 투표시
-					if(this.agreeCtn > this.disagreeCtn){ //성공
-						payload = "#Success";
-	
-					}
-					else{ // 실패
-						payload = "#Failure";
-					}
-					this.disagreeCtn = 0;
+					mapData.put("message", "Failure");
+					mapData.put("agree", this.agreeCtn.toString()); 
+					mapData.put("disagree", this.disagreeCtn.toString()); 
+					this.voteCtn = 0;
 					this.agreeCtn = 0;
-					this.playerCtn = 0;
+					this.disagreeCtn = 0;
+					sendMessage(mapData);
 				}
-
 			}
 
-			Information info = new Information();
-			info.setCount(this.playerCtn);
-			info.setPayload(payload);
-			ObjectMapper objectMapper = new ObjectMapper();
-
-			// 접속된 모든 세션에 메시지 전송
-			for (String key : sessions.keySet()) {
-				WebSocketSession ss = sessions.get(key);
-				// ss.sendMessage(new TextMessage(payload));
-				ss.sendMessage(new TextMessage(objectMapper.writeValueAsString(info)));
-			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -116,15 +93,32 @@ public class SocketAvalonService extends TextWebSocketHandler {
 	@Override
 	public void afterConnectionEstablished(WebSocketSession session) throws Exception {
 		super.afterConnectionEstablished(session);
+		// System.out.println("session.getId():"+session.getId());
+		this.totalPlayerCtn ++;
 		sessions.put(session.getId(), session);
+		Map<String, String> mapData = new HashMap<>();
+		mapData.put("totalPlayerCtn", this.totalPlayerCtn.toString());
+		sendMessage(mapData);
 	}
 
 	// 세션이 끝날때 실행되는 함수
 	@Override
 	public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
-
 		sessions.remove(session.getId());
+		this.totalPlayerCtn --;
 		super.afterConnectionClosed(session, status);
-
+		Map<String, String> mapData = new HashMap<>();
+		mapData.put("totalPlayerCtn", this.totalPlayerCtn.toString());
+		sendMessage(mapData);
 	}
+
+	// 메시지 json 형식으로 보내는 send 메소드
+	private void sendMessage(Map<String, String> mapData) throws JsonProcessingException, IOException{
+		ObjectMapper objectMapper = new ObjectMapper();
+		for (String sessionKey : sessions.keySet()) {
+			WebSocketSession ss = sessions.get(sessionKey);
+			ss.sendMessage(new TextMessage(objectMapper.writeValueAsString(mapData)));
+		}
+	}
+
 }
