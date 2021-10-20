@@ -13,56 +13,119 @@
 <body>
 
     <div class="p-3">
-        <div class="card p-3" style="background-color: #e4e4e4;">
+        <div class="card p-3 tapConent1" style="background-color: #e4e4e4;">
             <div class="text-center">레지스탕스 아발론 보드게임</div>
             <div id="totalPlayerCtn" class="card p-1 text-center">현재 플레이 인원 수: 0</div>
         </div>
+        <div class="card p-3 tapConent2" style="background-color: #e4e4e4;">
+            <div class="text-center">레지스탕스 아발론 보드게임</div>
+            <div id="totalCampaignCtn" class="card p-1 text-center">현재 플레이 인원 수: 0</div>
+        </div>
 
-        <div class="row p-3">
-            <div class="col-4 p-0">
-                <img src="/img/agree.png" style="width: 100%;" data-bs-toggle="modal" data-bs-target="#toAgrVote">
+        <ul class="nav nav-tabs mt-3">
+            <li class="nav-item">
+              <a id="tap1" class="nav-link active" onclick="toggleTap()">원정대<br/>구성 투표</a>
+            </li>
+            <li class="nav-item">
+              <a id="tap2" class="nav-link" onclick="toggleTap()">원정 결과<br/>투표</a>
+            </li>
+          </ul>
+
+        <div class="tapConent1">
+            <div class="row p-3">
+                <div class="col-4 p-0">
+                    <img src="/img/agree.png" style="width: 100%;" data-bs-toggle="modal" data-bs-target="#toAgrVote">
+                </div>
+                <div class="col-4 p-0 text-center align-middle" style="padding-top: 20% !important;">
+                    <h1>VS</h1>
+                </div>
+                <div class="col-4 p-0">
+                    <img src="/img/disagree.png" style="width: 100%;" data-bs-toggle="modal" data-bs-target="#toDagVote">
+                </div>
             </div>
-            <div class="col-4 p-0 text-center align-middle" style="padding-top: 20% !important;">
-                <h1>VS</h1>
+    
+            <div class="card p-1" style="background-color: #e4e4e4;">
+                <div class="text-center">투표결과</div>
             </div>
-            <div class="col-4 p-0">
-                <img src="/img/disagree.png" style="width: 100%;" data-bs-toggle="modal" data-bs-target="#toDagVote">
+    
+            <div id="expedition1" class="card m-3" style="background-color: whitesmoke;">
+                <div class="text-center">원정대 대기중...</div>
             </div>
-        </div>
+            <div id="expedition2" class="card m-3" style="background-color: #4c85da; color: white;" hidden>
+                <div class="text-center" >원정대 투표중...</div>
+            </div>
+            <div id="expedition3" class="card m-3" style="background-color: #38a12a; color: white;" hidden>
+                <div class="text-center" >원정대 구성 성공!</div>
+            </div>
+            <div id="expedition4" class="card m-3" style="background-color: rgb(173, 59, 59); color: white;" hidden>
+                <div class="text-center">원정대 구성 실패!</div>
+            </div>
+    
+            <div class="text-center" style="margin: 0 20% 0 20%;">
+                <table class="table table-bordered">
+                    <tr>
+                        <td>찬성</td>
+                        <td>반대</td>
+                    </tr>
+                    <tr>
+                        <td id="voteSuccessText" style="font-size: 5rem; color: red;">0</td>
+                        <td id="voteFailText" style="font-size: 5rem; color: red;">0</td>
+                    </tr>
+                </table>
+            </div>
+    
+            <div id="resetBtn" class="text-center" hidden>
+                <button class="btn btn-secondary btn-sm" onclick="reset()" >초기화</button>
+            </div>
+        </div> 
 
-        <div class="card p-1" style="background-color: #e4e4e4;">
-            <div class="text-center">투표결과</div>
-        </div>
-
-        <div id="expedition1" class="card m-3" style="background-color: whitesmoke;">
-            <div class="text-center">원정대 대기중...</div>
-        </div>
-        <div id="expedition2" class="card m-3" style="background-color: #4c85da; color: white;" hidden>
-            <div class="text-center" >원정대 투표중...</div>
-        </div>
-        <div id="expedition3" class="card m-3" style="background-color: #38a12a; color: white;" hidden>
-            <div class="text-center" >원정대 구성 성공!</div>
-        </div>
-        <div id="expedition4" class="card m-3" style="background-color: rgb(173, 59, 59); color: white;" hidden>
-            <div class="text-center">원정대 구성 실패!</div>
-        </div>
-
-        <div class="text-center" style="margin: 0 20% 0 20%;">
-            <table class="table table-bordered">
-                <tr>
-                    <td>찬성</td>
-                    <td>반대</td>
-                </tr>
-                <tr>
-                    <td id="voteSuccessText" style="font-size: 5rem; color: red;">0</td>
-                    <td id="voteFailText" style="font-size: 5rem; color: red;">0</td>
-                </tr>
-            </table>
-        </div>
-
-        <div id="resetBtn" class="text-center" hidden>
-            <button class="btn btn-secondary btn-sm" onclick="reset()" >초기화</button>
-        </div>
+        <div class="tapConent2">
+            <div class="row p-3">
+                <div class="col-4 p-0">
+                    <img src="/img/success.png" style="width: 100%;" data-bs-toggle="modal" data-bs-target="#toSuccessVote">
+                </div>
+                <div class="col-4 p-0 text-center align-middle" style="padding-top: 20% !important;">
+                    <h1>VS</h1>
+                </div>
+                <div class="col-4 p-0">
+                    <img src="/img/fail.png" style="width: 100%;" data-bs-toggle="modal" data-bs-target="#toFailVote">
+                </div>
+            </div>
+    
+            <div class="card p-1" style="background-color: #e4e4e4;">
+                <div class="text-center">투표결과</div>
+            </div>
+    
+            <div id="campaign1" class="card m-3" style="background-color: whitesmoke;">
+                <div class="text-center">원정대 대기중...</div>
+            </div>
+            <div id="campaign2" class="card m-3" style="background-color: #4c85da; color: white;" hidden>
+                <div class="text-center" >원정 결과 투표중...</div>
+            </div>
+            <div id="campaign3" class="card m-3" style="background-color: #38a12a; color: white;" hidden>
+                <div class="text-center" >원정 성공!</div>
+            </div>
+            <div id="campaign4" class="card m-3" style="background-color: rgb(173, 59, 59); color: white;" hidden>
+                <div class="text-center">원정 실패!</div>
+            </div>
+    
+            <div class="text-center" style="margin: 0 20% 0 20%;">
+                <table class="table table-bordered">
+                    <tr>
+                        <td>성공</td>
+                        <td>실패</td>
+                    </tr>
+                    <tr>
+                        <td id="successText" style="font-size: 5rem; color: red;">0</td>
+                        <td id="failText" style="font-size: 5rem; color: red;">0</td>
+                    </tr>
+                </table>
+            </div>
+    
+            <div id="resetCompaignBtn" class="text-center" hidden>
+                <button class="btn btn-secondary btn-sm" onclick="resetCampaign()" >초기화</button>
+            </div>
+        </div> 
 
         
     
@@ -76,8 +139,8 @@
                 </h6>
                 </div>
                 <div class="modal-body">
-                    <button class="btn btn-secondary" style="width: 49%;" data-bs-dismiss="modal">취소</button>
-                    <button class="btn btn-primary" style="width: 49%;" onclick="agree()" >찬성</button>
+                    <button class="btn btn-secondary" style="width: 49%;" data-bs-dismiss="modal">NO</button>
+                    <button class="btn btn-primary" style="width: 49%;" onclick="agree()" >YES</button>
                 </div>
             </div>
             </div>
@@ -92,12 +155,47 @@
                 </h6>
                 </div>
                 <div class="modal-body">
-                    <button class="btn btn-secondary close" style="width: 49%;" data-bs-dismiss="modal">취소</button>
-                    <button class="btn btn-danger" style="width: 49%;" onclick="disagree()" >반대</button>
+                    <button class="btn btn-secondary close" style="width: 49%;" data-bs-dismiss="modal">NO</button>
+                    <button class="btn btn-danger" style="width: 49%;" onclick="disagree()" >YES</button>
                 </div>
             </div>
             </div>
         </div>
+
+        <div class="modal fade" id="toSuccessVote" data-bs-backdrop="static" data-bs-keyboard="false" 
+            tabindex="-1">
+            <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h6 class="modal-title">
+                    원정대 출정 성공,반대 투표. '성공'을 선택하셨습니다. 선택 후 수정할 수 없습니다. 신중히 선택해주세요.
+                </h6>
+                </div>
+                <div class="modal-body">
+                    <button class="btn btn-secondary" style="width: 49%;" data-bs-dismiss="modal">NO</button>
+                    <button class="btn btn-primary" style="width: 49%;" onclick="success()" >YES</button>
+                </div>
+            </div>
+            </div>
+        </div>
+        <div class="modal fade" id="toFailVote" data-bs-backdrop="static" data-bs-keyboard="false" 
+            tabindex="-1">
+            <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h6 class="modal-title">
+                    원정대 출정 성공,반대 투표. '실패'을 선택하셨습니다. 선택 후 수정할 수 없습니다. 신중히 선택해주세요.
+                </h6>
+                </div>
+                <div class="modal-body">
+                    <button class="btn btn-secondary close" style="width: 49%;" data-bs-dismiss="modal">NO</button>
+                    <button class="btn btn-danger" style="width: 49%;" onclick="fail()" >YES</button>
+                </div>
+            </div>
+            </div>
+        </div>
+
+
         <div class="modal fade" id="alertVote" data-bs-backdrop="static" data-bs-keyboard="false" 
             tabindex="-1">
             <div class="modal-dialog">
@@ -115,18 +213,36 @@
         </div>
     
     </div>
+
+    <style>
+        .nav-link {
+            color: #495057;
+            border-color: #e4e4e4 #e4e4e4 #e4e4e4 !important;
+        }
+        .nav-link.active {
+            color: whitesmoke !important;
+            background-color: orange !important;
+        }
+    </style>
     
     <script type="text/javascript">
 
         var init = false;
-        var userCode = '';
+        // var userCode = '';
+        // var preTotalPlayerCtn = 0;
         var isVote = false;
-        var preTotalPlayerCtn = 0;
+        var tapToggle = true;
 
         if(!init){
+
+            $("#tap2").removeClass("active");
+            $("#tap1").addClass("active");
+            $(".tapConent2").attr("hidden", true);
+            $(".tapConent1").attr("hidden", false);
+
             init = true;
-            userCode = Math.random().toString(36).substr(2,11);
-            console.log(userCode);
+            // userCode = Math.random().toString(36).substr(2,11);
+            // console.log(userCode);
             connectWs();
         }
 
@@ -135,10 +251,10 @@
             ws = new WebSocket('ws://' + location.host + '/avalon/message');
             console.log("소켓 접속");
 
-            setInterval(function() {
-                var d = new Date();
-                ws.send("#sessionTime: "+d);
-            }, 10000); // 10초
+            // setInterval(function() {
+            //     var d = new Date();
+            //     ws.send("#sessionTime: "+d);
+            // }, 10000); // 10초
 
             ws.onmessage = function(data) {
                 
@@ -147,6 +263,9 @@
 
                 if(json.totalPlayerCtn > 0){
                    $("#totalPlayerCtn").text("현재 플레이 인원 수: "+json.totalPlayerCtn)
+                }
+                if(json.campaignerCtn > 0){
+                   $("#totalCampaignCtn").text("현재 원정대 인원 수: "+json.campaignerCtn)
                 }
 
                 switch (json.message) {
@@ -185,6 +304,42 @@
                         $("#voteFailText").text(json.disagree);
                         $("#resetBtn").attr("hidden", false);
                         break;
+                    case "ResetCampaign":
+                        $("#campaign1").attr("hidden", false);
+                        $("#campaign2").attr("hidden", true);
+                        $("#campaign3").attr("hidden", true);
+                        $("#campaign4").attr("hidden", true);
+                        $("#resetCompaignBtn").attr("hidden", true);
+                        $("#successText").text(json.success);
+                        $("#failText").text(json.fail);
+                        resetVoteCtn();
+                        toggleTap();
+                        break;
+                    case "comping":
+                        $("#campaign1").attr("hidden", true);
+                        $("#campaign2").attr("hidden", false);
+                        $("#campaign3").attr("hidden", true);
+                        $("#campaign4").attr("hidden", true);
+                        $("#resetCompaignBtn").attr("hidden", true);
+                        break;
+                    case "Campaign_Success":
+                        $("#campaign1").attr("hidden", true);
+                        $("#campaign2").attr("hidden", true);
+                        $("#campaign3").attr("hidden", false);
+                        $("#campaign4").attr("hidden", true);
+                        $("#successText").text(json.success);
+                        $("#failText").text(json.fail);
+                        $("#resetCompaignBtn").attr("hidden", false);
+                        break;
+                    case "Campaign_Failure":
+                        $("#campaign1").attr("hidden", true);
+                        $("#campaign2").attr("hidden", true);
+                        $("#campaign3").attr("hidden", true);
+                        $("#campaign4").attr("hidden", false);
+                        $("#successText").text(json.success);
+                        $("#failText").text(json.fail);
+                        $("#resetCompaignBtn").attr("hidden", false);
+                        break;
                 
                     default:
                         break;
@@ -219,12 +374,68 @@
             }
         }
 
+        function success() {
+            if(this.isVote) {
+                $('#toSuccessVote').modal('hide')
+                $('#alertVote').modal('show')
+            }
+            else {
+                $('#toSuccessVote').modal('hide')
+                this.isVote = true;
+                ws.send("#toVoteSuccess");
+            }
+        }
+
+        function fail() {
+            if(this.isVote) {
+                $('#toFailVote').modal('hide')
+                $('#alertVote').modal('show')
+            }
+            else {
+                $('#toFailVote').modal('hide')
+                this.isVote = true;
+                ws.send("#toVoteFail");
+            }
+        }
+
         function reset() {
             ws.send("#reset");
         }
 
+        function resetCampaign() {
+            ws.send("#resetCampaign");
+        }
+
         function resetVoteCtn() {
             this.isVote = false;
+        }
+
+        function toggleTap() {
+            if(tapToggle){ //tap2 클릭시
+                $("#tap1").removeClass("active");
+                $("#tap2").addClass("active");
+                this.tapToggle = false;
+                $(".tapConent1").attr("hidden", true);
+                $(".tapConent2").attr("hidden", false);
+                
+                $("#campaign1").attr("hidden", false);
+                $("#campaign2").attr("hidden", true);
+                $("#campaign3").attr("hidden", true);
+                $("#campaign4").attr("hidden", true);
+                $("#resetCompaignBtn").attr("hidden", true);
+                $("#successText").text(0);
+                $("#failText").text(0);
+
+                ws.send("#tap2PlayerPlus");
+            }
+            else{ //tap1 클릭시
+                $("#tap2").removeClass("active");
+                $("#tap1").addClass("active");
+                this.tapToggle = true;
+                $(".tapConent2").attr("hidden", true);
+                $(".tapConent1").attr("hidden", false);
+                resetVoteCtn();
+            }
         }
 
     </script>
