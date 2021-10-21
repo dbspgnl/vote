@@ -16,21 +16,35 @@
             <p><h1>메뉴</h1></p>
         </div>
         <div class="mb-3">
-            <button class="btn btn-primary" onclick="chat()" >채팅방</button>
+            <button class="btn btn-primary w-50" onclick="chat()" >채팅방</button>
         </div>
         <div class="mb-3">
-            <button class="btn btn-danger" onclick="avalon()" >아발론</button>
+            <button class="btn btn-danger w-50" onclick="avalonExpedition()" >아발론 투표</button>
+        </div>
+        <div class="mb-3">
+            <button class="btn btn-success w-50" onclick="avalonCampaign()" >아발론 원정대</button>
         </div>
         
     </div>
+
+    <style>
+        body{
+            font-size: 3vw;
+        }
+    </style>
+
     <script type="text/javascript">
 
         function chat() {
             location.href="/chat";
         }
 
-        function avalon() {
-            location.href="/avalon";
+        function avalonExpedition() {
+            location.href="/avalonExpedition";
+        }
+
+        function avalonCampaign() {
+            location.href="/avalonCampaign";
         }
 
     </script>

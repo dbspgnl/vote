@@ -17,9 +17,14 @@ public class MainController {
         return "chat";
     }
 
-    @RequestMapping(value = "/avalon")
+    @RequestMapping(value = "/avalonExpedition")
+    public String avalonExpedition() {
+        return "avalonExpedition";
+    }
+
+    @RequestMapping(value = "/avalonCampaign")
     public String avalon() {
-        return "avalon";
+        return "avalonCampaign";
     }
 
 }

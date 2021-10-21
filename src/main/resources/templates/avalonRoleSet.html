@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+</head>
+<body>
+
+    <div class="p-3">
+        <div class="card p-3" style="background-color: #e4e4e4;">
+            <div class="text-center">레지스탕스 아발론 보드게임</div>
+            <div id="totalPlayerCtn" class="card p-1 text-center">현재 플레이 인원 수: 0</div>
+        </div>
+
+        <ul class="nav nav-tabs text-center mt-3">
+            <li class="nav-item w-25">
+              <a class="nav-link active" href="../avalonExpedition">원정대<br/>구성 투표</a>
+            </li>
+            <li class="nav-item w-25">
+              <a class="nav-link" href="../avalonCampaign">원정 결과<br/>투표</a>
+            </li>
+            <li class="nav-item w-25">
+              <a class="nav-link" href="../">메뉴<br/>화면</a>
+            </li>
+        </ul>
+
+        <div class="row p-3">
+            <div class="col-4 p-0">
+                <img src="/img/agree.png" style="width: 100%; height: 100%;" data-bs-toggle="modal" data-bs-target="#toAgrVote">
+            </div>
+            <div class="col-4 p-0 text-center align-middle" style="padding-top: 20% !important;">
+                <h1 style="font-size: 10vw;">VS</h1>
+            </div>
+            <div class="col-4 p-0">
+                <img src="/img/disagree.png" style="width: 100%; height: 100%;" data-bs-toggle="modal" data-bs-target="#toDagVote">
+            </div>
+        </div>
+
+        <div class="card p-1" style="background-color: #e4e4e4;">
+            <div class="text-center">투표결과</div>
+        </div>
+
+        <div id="expedition1" class="card m-3" style="background-color: whitesmoke;">
+            <div class="text-center">원정대 대기중...</div>
+        </div>
+        <div id="expedition2" class="card m-3" style="background-color: #4c85da; color: white;" hidden>
+            <div class="text-center" >원정대 투표중...</div>
+        </div>
+        <div id="expedition3" class="card m-3" style="background-color: #38a12a; color: white;" hidden>
+            <div class="text-center" >원정대 구성 성공!</div>
+        </div>
+        <div id="expedition4" class="card m-3" style="background-color: rgb(173, 59, 59); color: white;" hidden>
+            <div class="text-center">원정대 구성 실패!</div>
+        </div>
+
+        <div class="text-center" style="margin: 0 20% 0 20%;">
+            <table class="table table-bordered">
+                <tr>
+                    <td>찬성</td>
+                    <td>반대</td>
+                </tr>
+                <tr>
+                    <td id="voteSuccessText" style="font-size: 5rem; color: red;">0</td>
+                    <td id="voteFailText" style="font-size: 5rem; color: red;">0</td>
+                </tr>
+            </table>
+        </div>
+
+        <div id="resetBtn" class="text-center" hidden>
+            <button class="btn btn-secondary btn-sm" onclick="reset()" >초기화</button>
+        </div>
+
+        
+    
+        <div class="modal fade" id="toAgrVote" data-bs-backdrop="static" data-bs-keyboard="false" 
+            tabindex="-1">
+            <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h6 class="modal-title">
+                    원정대 구성 찬,반 투표. '찬성'을 선택하셨습니다. 투표 후 수정할 수 없습니다. 신중히 선택해주세요.
+                </h6>
+                </div>
+                <div class="modal-body">
+                    <button class="btn btn-secondary" style="width: 49%;" data-bs-dismiss="modal">취소</button>
+                    <button class="btn btn-primary" style="width: 49%;" onclick="agree()" >찬성</button>
+                </div>
+            </div>
+            </div>
+        </div>
+        <div class="modal fade" id="toDagVote" data-bs-backdrop="static" data-bs-keyboard="false" 
+            tabindex="-1">
+            <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h6 class="modal-title">
+                    원정대 구성 찬,반 투표. '반대'를 선택하셨습니다. 투표 후 수정할 수 없습니다. 신중히 선택해주세요.
+                </h6>
+                </div>
+                <div class="modal-body">
+                    <button class="btn btn-secondary close" style="width: 49%;" data-bs-dismiss="modal">취소</button>
+                    <button class="btn btn-danger" style="width: 49%;" onclick="disagree()" >반대</button>
+                </div>
+            </div>
+            </div>
+        </div>
+        <div class="modal fade" id="alertVote" data-bs-backdrop="static" data-bs-keyboard="false" 
+            tabindex="-1">
+            <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h6 class="modal-title">
+                    이미 투표 완료하셨습니다.
+                </h6>
+                </div>
+                <div class="modal-body">
+                    <button class="btn btn-secondary close" style="width: 100%;" data-bs-dismiss="modal">OK</button>
+                </div>
+            </div>
+            </div>
+        </div>
+    
+    </div>
+
+    <style>
+        body{
+            font-size: 3vw;
+        }
+        .nav-link {
+            color: #495057;
+            border-color: #e4e4e4 #e4e4e4 #e4e4e4 !important;
+        }
+        .nav-link.active {
+            color: whitesmoke !important;
+            background-color: orange !important;
+        }
+    </style>
+    
+    <script type="text/javascript">
+
+        var init = false;
+        var userCode = '';
+        var isVote = false;
+        var preTotalPlayerCtn = 0;
+
+        if(!init){
+            init = true;
+            userCode = Math.random().toString(36).substr(2,11);
+            console.log(userCode);
+            connectWs();
+        }
+
+        var ws;
+        function connectWs() {
+            ws = new WebSocket('ws://' + location.host + '/avalonExpedition/message');
+            console.log("소켓 접속");
+
+            setInterval(function() {
+                var d = new Date();
+                ws.send("#sessionTime: "+d);
+            }, 10000); // 10초
+
+            ws.onmessage = function(data) {
+                
+                var json = JSON.parse(data.data);
+                // console.log(json);
+
+                if(json.totalPlayerCtn > 0){
+                   $("#totalPlayerCtn").text("현재 플레이 인원 수: "+json.totalPlayerCtn)
+                }
+
+                switch (json.message) {
+                    case "Reset":
+                        $("#expedition1").attr("hidden", false);
+                        $("#expedition2").attr("hidden", true);
+                        $("#expedition3").attr("hidden", true);
+                        $("#expedition4").attr("hidden", true);
+                        $("#resetBtn").attr("hidden", true);
+                        $("#voteSuccessText").text(json.agree);
+                        $("#voteFailText").text(json.disagree);
+                        resetVoteCtn();
+                        break;
+                    case "voting":
+                        $("#expedition1").attr("hidden", true);
+                        $("#expedition2").attr("hidden", false);
+                        $("#expedition3").attr("hidden", true);
+                        $("#expedition4").attr("hidden", true);
+                        $("#resetBtn").attr("hidden", true);
+                        break;
+                    case "Success":
+                        $("#expedition1").attr("hidden", true);
+                        $("#expedition2").attr("hidden", true);
+                        $("#expedition3").attr("hidden", false);
+                        $("#expedition4").attr("hidden", true);
+                        $("#voteSuccessText").text(json.agree);
+                        $("#voteFailText").text(json.disagree);
+                        $("#resetBtn").attr("hidden", false);
+                        break;
+                    case "Failure":
+                        $("#expedition1").attr("hidden", true);
+                        $("#expedition2").attr("hidden", true);
+                        $("#expedition3").attr("hidden", true);
+                        $("#expedition4").attr("hidden", false);
+                        $("#voteSuccessText").text(json.agree);
+                        $("#voteFailText").text(json.disagree);
+                        $("#resetBtn").attr("hidden", false);
+                        break;
+                
+                    default:
+                        break;
+                }
+
+                
+            }
+            
+        }
+
+        function agree() {
+            if(this.isVote) {
+                $('#toAgrVote').modal('hide')
+                $('#alertVote').modal('show')
+            }
+            else {
+                $('#toAgrVote').modal('hide')
+                this.isVote = true;
+                ws.send("#toVoteAgree");
+            }
+        }
+
+        function disagree() {
+            if(this.isVote) {
+                $('#toDagVote').modal('hide')
+                $('#alertVote').modal('show')
+            }
+            else {
+                $('#toDagVote').modal('hide')
+                this.isVote = true;
+                ws.send("#toVoteDisagree");
+            }
+        }
+
+        function reset() {
+            ws.send("#reset");
+        }
+
+        function resetVoteCtn() {
+            this.isVote = false;
+        }
+
+    </script>
+    
+</body>
+</html>

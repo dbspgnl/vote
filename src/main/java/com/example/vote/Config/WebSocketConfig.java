@@ -1,6 +1,7 @@
 package com.example.vote.Config;
 
-import com.example.vote.Service.SocketAvalonService;
+import com.example.vote.Service.SocketAvalonCampaign;
+import com.example.vote.Service.SocketAvalonExpedition;
 import com.example.vote.Service.SocketTextHandler;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,11 +18,15 @@ public class WebSocketConfig implements WebSocketConfigurer {
 	SocketTextHandler socketTextHandler;
 
 	@Autowired
-	SocketAvalonService avalonService;
+	SocketAvalonExpedition avalonExpedition;
+
+	@Autowired
+	SocketAvalonCampaign avalonCampaign;
 	
 	public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
 		registry.addHandler(socketTextHandler, "/chat/message");
-		registry.addHandler(avalonService, "/avalon/message");
+		registry.addHandler(avalonExpedition, "/avalonExpedition/message");
+		registry.addHandler(avalonCampaign, "/avalonCampaign/message");
 	}
 
 }
