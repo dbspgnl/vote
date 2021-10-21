@@ -15,116 +15,49 @@
     <div class="p-3">
         <div class="card p-3" style="background-color: #e4e4e4;">
             <div class="text-center">레지스탕스 아발론 보드게임</div>
-            <div id="totalPlayerCtn" class="card p-1 text-center">현재 플레이 인원 수: 0</div>
+            <div id="totalPlayerCtn" class="card p-1 text-center">현재 참여한 인원 수: 0</div>
         </div>
 
         <ul class="nav nav-tabs text-center mt-3">
             <li class="nav-item w-25">
-              <a class="nav-link active" href="../avalonExpedition">원정대<br/>구성 투표</a>
+              <a class="nav-link" href="../avalonExpedition">원정대<br/>구성 투표</a>
             </li>
             <li class="nav-item w-25">
-              <a class="nav-link" href="../avalonCampaign">원정 결과<br/>투표</a>
+                <a class="nav-link active" href="../avalonCampaign">원정 결과<br/>투표</a>
             </li>
             <li class="nav-item w-25">
               <a class="nav-link" href="../">메뉴<br/>화면</a>
             </li>
         </ul>
 
-        <div class="row p-3">
-            <div class="col-4 p-0">
-                <img src="/img/agree.png" style="width: 100%; height: 100%;" data-bs-toggle="modal" data-bs-target="#toAgrVote">
-            </div>
-            <div class="col-4 p-0 text-center align-middle" style="padding-top: 20% !important;">
-                <h1 style="font-size: 10vw;">VS</h1>
-            </div>
-            <div class="col-4 p-0">
-                <img src="/img/disagree.png" style="width: 100%; height: 100%;" data-bs-toggle="modal" data-bs-target="#toDagVote">
-            </div>
-        </div>
-
-        <div class="card p-1" style="background-color: #e4e4e4;">
-            <div class="text-center">투표결과</div>
-        </div>
-
-        <div id="expedition1" class="card m-3" style="background-color: whitesmoke;">
-            <div class="text-center">원정대 대기중...</div>
-        </div>
-        <div id="expedition2" class="card m-3" style="background-color: #4c85da; color: white;" hidden>
-            <div class="text-center" >원정대 투표중...</div>
-        </div>
-        <div id="expedition3" class="card m-3" style="background-color: #38a12a; color: white;" hidden>
-            <div class="text-center" >원정대 구성 성공!</div>
-        </div>
-        <div id="expedition4" class="card m-3" style="background-color: rgb(173, 59, 59); color: white;" hidden>
-            <div class="text-center">원정대 구성 실패!</div>
-        </div>
-
-        <div class="text-center" style="margin: 0 20% 0 20%;">
-            <table class="table table-bordered">
-                <tr>
-                    <td>찬성</td>
-                    <td>반대</td>
-                </tr>
-                <tr>
-                    <td id="voteSuccessText" style="font-size: 5rem; color: red;">0</td>
-                    <td id="voteFailText" style="font-size: 5rem; color: red;">0</td>
-                </tr>
-            </table>
-        </div>
-
-        <div id="resetBtn" class="text-center" hidden>
-            <button class="btn btn-secondary btn-sm" onclick="reset()" >초기화</button>
-        </div>
-
-        
-    
-        <div class="modal fade" id="toAgrVote" data-bs-backdrop="static" data-bs-keyboard="false" 
+        <div class="modal fade" id="selectRoleModal" data-bs-backdrop="static" data-bs-keyboard="false" 
             tabindex="-1">
             <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
                 <h6 class="modal-title">
-                    원정대 구성 찬,반 투표. '찬성'을 선택하셨습니다. 투표 후 수정할 수 없습니다. 신중히 선택해주세요.
+                    자신의 이름과 배정받은 역할(직업)을 선택해주세요.
                 </h6>
                 </div>
                 <div class="modal-body">
-                    <button class="btn btn-secondary" style="width: 49%;" data-bs-dismiss="modal">취소</button>
-                    <button class="btn btn-primary" style="width: 49%;" onclick="agree()" >찬성</button>
+                    <div class="card p-3">
+                        <div class="col-2" style="font-size: 1rem;">이름</div>
+                        <div class="col-10"><input type="text" name="" id="" class="w-"></div>
+                    </div>
+                    <div class="card p-3 m-0">
+                        <div class="card" style="width: 150px; height: 200px;">시민</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary close" style="width: 48%;" data-bs-dismiss="modal">취소</button>
+                    <button class="btn btn-primary" style="width: 48%;" onclick="selectRole()" >선택</button>
                 </div>
             </div>
             </div>
         </div>
-        <div class="modal fade" id="toDagVote" data-bs-backdrop="static" data-bs-keyboard="false" 
-            tabindex="-1">
-            <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                <h6 class="modal-title">
-                    원정대 구성 찬,반 투표. '반대'를 선택하셨습니다. 투표 후 수정할 수 없습니다. 신중히 선택해주세요.
-                </h6>
-                </div>
-                <div class="modal-body">
-                    <button class="btn btn-secondary close" style="width: 49%;" data-bs-dismiss="modal">취소</button>
-                    <button class="btn btn-danger" style="width: 49%;" onclick="disagree()" >반대</button>
-                </div>
-            </div>
-            </div>
-        </div>
-        <div class="modal fade" id="alertVote" data-bs-backdrop="static" data-bs-keyboard="false" 
-            tabindex="-1">
-            <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                <h6 class="modal-title">
-                    이미 투표 완료하셨습니다.
-                </h6>
-                </div>
-                <div class="modal-body">
-                    <button class="btn btn-secondary close" style="width: 100%;" data-bs-dismiss="modal">OK</button>
-                </div>
-            </div>
-            </div>
-        </div>
+        <button id="initModal" data-bs-toggle="modal" data-bs-target="#selectRoleModal" hidden></button>
+
+
     
     </div>
 
@@ -151,6 +84,7 @@
 
         if(!init){
             init = true;
+            $("#initModal").trigger('click');
             userCode = Math.random().toString(36).substr(2,11);
             console.log(userCode);
             connectWs();
@@ -158,7 +92,8 @@
 
         var ws;
         function connectWs() {
-            ws = new WebSocket('ws://' + location.host + '/avalonExpedition/message');
+            
+            ws = new WebSocket('ws://' + location.host + '/avalonCampaign/message');
             console.log("소켓 접속");
 
             setInterval(function() {
@@ -221,19 +156,7 @@
             
         }
 
-        function agree() {
-            if(this.isVote) {
-                $('#toAgrVote').modal('hide')
-                $('#alertVote').modal('show')
-            }
-            else {
-                $('#toAgrVote').modal('hide')
-                this.isVote = true;
-                ws.send("#toVoteAgree");
-            }
-        }
-
-        function disagree() {
+        function selectRole() {
             if(this.isVote) {
                 $('#toDagVote').modal('hide')
                 $('#alertVote').modal('show')

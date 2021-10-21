@@ -23,8 +23,13 @@ public class MainController {
     }
 
     @RequestMapping(value = "/avalonCampaign")
-    public String avalon() {
+    public String avalonCampaign() {
         return "avalonCampaign";
+    }
+
+    @RequestMapping(value = "/avalonRoleSet")
+    public String avalonRoleSet() {
+        return "avalonRoleSet";
     }
 
 }
