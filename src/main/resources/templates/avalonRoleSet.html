@@ -41,16 +41,26 @@
                 </div>
                 <div class="modal-body">
                     <div class="card p-3">
-                        <div class="col-2" style="font-size: 1rem;">이름</div>
-                        <div class="col-10"><input type="text" name="" id="" class="w-"></div>
-                    </div>
-                    <div class="card p-3 m-0">
-                        <div class="card" style="width: 150px; height: 200px;">시민</div>
+                        <div class="card-body">
+                            <div class="col-2">이름</div>
+                            <div class="col-10"><input type="text" id="playerName" class="form-control"></div>
+                        </div>
+                        <div class="card-body d-flex flex-wrap">
+                            <div class="card m-1 role-card"><img src="/img/servant.png"></div>
+                            <div class="card m-1 role-card"><img src="/img/merlin.png"></div>
+                            <div class="card m-1 role-card"><img src="/img/percival.png"></div>
+                            <div class="card m-1 role-card"><img src="/img/minion.png"></div>
+                            <div class="card m-1 role-card"><img src="/img/assasin.png"></div>
+                            <div class="card m-1 role-card"><img src="/img/morcana.png"></div>
+                            <div class="card m-1 role-card"><img src="/img/oberon.png"></div>
+                            <div class="card m-1 role-card"><img src="/img/mordred.png"></div>
+
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-secondary close" style="width: 48%;" data-bs-dismiss="modal">취소</button>
-                    <button class="btn btn-primary" style="width: 48%;" onclick="selectRole()" >선택</button>
+                    <button class="btn btn-secondary close" style="width: 47%;" data-bs-dismiss="modal">취소</button>
+                    <button class="btn btn-primary" style="width: 47%;" onclick="selectRole()" >선택</button>
                 </div>
             </div>
             </div>
@@ -65,6 +75,9 @@
         body{
             font-size: 3vw;
         }
+        .modal{
+            font-size: 1rem;
+        }
         .nav-link {
             color: #495057;
             border-color: #e4e4e4 #e4e4e4 #e4e4e4 !important;
@@ -73,33 +86,31 @@
             color: whitesmoke !important;
             background-color: orange !important;
         }
+        .role-card{
+            width: 120px; height: 170px;
+        }
+        .role-card img{
+            width: 100%; height: 100%;
+        }
     </style>
     
     <script type="text/javascript">
 
         var init = false;
+        var myRoleNumber = -1;
         var userCode = '';
-        var isVote = false;
-        var preTotalPlayerCtn = 0;
-
+        
         if(!init){
             init = true;
             $("#initModal").trigger('click');
-            userCode = Math.random().toString(36).substr(2,11);
-            console.log(userCode);
             connectWs();
         }
 
         var ws;
         function connectWs() {
             
-            ws = new WebSocket('ws://' + location.host + '/avalonCampaign/message');
+            ws = new WebSocket('ws://' + location.host + '/avalonRoleSet/message');
             console.log("소켓 접속");
-
-            setInterval(function() {
-                var d = new Date();
-                ws.send("#sessionTime: "+d);
-            }, 10000); // 10초
 
             ws.onmessage = function(data) {
                 
@@ -150,21 +161,6 @@
                     default:
                         break;
                 }
-
-                
-            }
-            
-        }
-
-        function selectRole() {
-            if(this.isVote) {
-                $('#toDagVote').modal('hide')
-                $('#alertVote').modal('show')
-            }
-            else {
-                $('#toDagVote').modal('hide')
-                this.isVote = true;
-                ws.send("#toVoteDisagree");
             }
         }
 
@@ -172,9 +168,20 @@
             ws.send("#reset");
         }
 
-        function resetVoteCtn() {
-            this.isVote = false;
+
+        $(".role-card").click(function () {
+            var index = $(".role-card").index(this);
+            myRoleNumber = index;
+            $(".role-card").css("opacity","0.5");
+            $(".role-card").eq(index).css("opacity","1");
+        })
+
+        function selectRole(){
+            var name = $("#playerName").val();
+            // userCode = Math.random().toString(36).substr(2,11);
+            ws.send("#selectRole?myRoleNumber="+myRoleNumber+"&name="+name);
         }
+
 
     </script>
     
