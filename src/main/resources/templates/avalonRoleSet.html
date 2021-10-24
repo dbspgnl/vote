@@ -19,16 +19,28 @@
         </div>
 
         <ul class="nav nav-tabs text-center mt-3">
-            <li class="nav-item w-25">
+            <!-- <li class="nav-item w-25">
               <a class="nav-link" href="../avalonExpedition">원정대<br/>구성 투표</a>
             </li>
             <li class="nav-item w-25">
                 <a class="nav-link active" href="../avalonCampaign">원정 결과<br/>투표</a>
-            </li>
+            </li> -->
             <li class="nav-item w-25">
               <a class="nav-link" href="../">메뉴<br/>화면</a>
             </li>
         </ul>
+
+        <div class="card mt-3 p-1" style="background-color: #e4e4e4;">
+            <button class="btn btn-danger" onclick="reset()">초기화</button>
+        </div>
+
+        <div class="card mt-3 p-1" style="background-color: #e4e4e4;">
+            <button class="btn btn-success" onclick="showResult()">배정결과 보기</button>
+        </div>
+
+        <div class="card mt-3 p-1" style="background-color: #e4e4e4;">
+            <div id="resultText"></div>
+        </div>
 
         <div class="modal fade" id="selectRoleModal" data-bs-backdrop="static" data-bs-keyboard="false" 
             tabindex="-1">
@@ -115,59 +127,87 @@
             ws.onmessage = function(data) {
                 
                 var json = JSON.parse(data.data);
-                // console.log(json);
+                console.log(json);
 
                 if(json.totalPlayerCtn > 0){
                    $("#totalPlayerCtn").text("현재 플레이 인원 수: "+json.totalPlayerCtn)
                 }
 
-                switch (json.message) {
-                    case "Reset":
-                        $("#expedition1").attr("hidden", false);
-                        $("#expedition2").attr("hidden", true);
-                        $("#expedition3").attr("hidden", true);
-                        $("#expedition4").attr("hidden", true);
-                        $("#resetBtn").attr("hidden", true);
-                        $("#voteSuccessText").text(json.agree);
-                        $("#voteFailText").text(json.disagree);
-                        resetVoteCtn();
-                        break;
-                    case "voting":
-                        $("#expedition1").attr("hidden", true);
-                        $("#expedition2").attr("hidden", false);
-                        $("#expedition3").attr("hidden", true);
-                        $("#expedition4").attr("hidden", true);
-                        $("#resetBtn").attr("hidden", true);
-                        break;
-                    case "Success":
-                        $("#expedition1").attr("hidden", true);
-                        $("#expedition2").attr("hidden", true);
-                        $("#expedition3").attr("hidden", false);
-                        $("#expedition4").attr("hidden", true);
-                        $("#voteSuccessText").text(json.agree);
-                        $("#voteFailText").text(json.disagree);
-                        $("#resetBtn").attr("hidden", false);
-                        break;
-                    case "Failure":
-                        $("#expedition1").attr("hidden", true);
-                        $("#expedition2").attr("hidden", true);
-                        $("#expedition3").attr("hidden", true);
-                        $("#expedition4").attr("hidden", false);
-                        $("#voteSuccessText").text(json.agree);
-                        $("#voteFailText").text(json.disagree);
-                        $("#resetBtn").attr("hidden", false);
-                        break;
-                
-                    default:
-                        break;
+                if(json.result){
+                    switch (myRoleNumber) {
+                        case 0:
+                            $("#resultText").html(`당신은 멀린을 도와서 악의 세력을 밝혀내야 합니다.`)
+                            break;
+                        case 1:
+                            var array = [];
+                            array.push(json.assasin);
+                            array.push(json.minion);
+                            array.push(json.morcana);
+                            array.push(json.oberon);
+                            array.sort(() => Math.random() - 0.5);
+                            if(json.mordred != null || json.mordred == ''){
+                                $("#resultText").html(`멀린! 악의 세력은...<br>${array}<br> 그리고 모드레드가 숨어있습니다!`)
+                            }
+                            else {
+                                $("#resultText").html(`멀린! 악의 세력은...<br>${array}`)
+                            }
+
+                            break;
+                        case 2:
+                            var array = [];
+                            array.push(json.merlin);
+                            array.push(json.morcana);
+                            array.sort(() => Math.random() - 0.5);
+                            $("#resultText").html(`멀린은 아마도...<br>${array}`)
+                            break;
+                        case 3:
+                            var array = [];
+                            array.push(json.assasin);
+                            array.push(json.morcana);
+                            array.push(json.mordred);
+                            array.sort(() => Math.random() - 0.5);
+                            $("#resultText").html(`아래의 악의 세력과 협동하시오...<br>${array}`)
+                            break;
+                        case 4:
+                            var array = [];
+                            array.push(json.minion);
+                            array.push(json.morcana);
+                            array.push(json.mordred);
+                            array.sort(() => Math.random() - 0.5);
+                            $("#resultText").html(`아래의 악의 세력과 협동하시오...<br>${array}`)
+                            break;
+                        case 5:
+                            var array = [];
+                            array.push(json.minion);
+                            array.push(json.assasin);
+                            array.push(json.mordred);
+                            array.sort(() => Math.random() - 0.5);
+                            $("#resultText").html(`아래의 악의 세력과 협동하시오...<br>${array}`)
+                            break;
+                        case 6:
+                            $("#resultText").html(`당신은 악의 세력이 승리하도록 해야합니다.`)
+                            break;
+                        case 7:
+                            var array = [];
+                            array.push(json.minion);
+                            array.push(json.assasin);
+                            array.push(json.morcana);
+                            array.sort(() => Math.random() - 0.5);
+                            $("#resultText").html(`아래의 악의 세력과 협동하시오...<br>${array}`)
+                            break;
+                    
+                        default:
+                            break;
+                    }
+                    
                 }
+
             }
         }
 
         function reset() {
             ws.send("#reset");
         }
-
 
         $(".role-card").click(function () {
             var index = $(".role-card").index(this);
@@ -180,6 +220,11 @@
             var name = $("#playerName").val();
             // userCode = Math.random().toString(36).substr(2,11);
             ws.send("#selectRole?myRoleNumber="+myRoleNumber+"&name="+name);
+            $('#selectRoleModal').modal('hide')
+        }
+
+        function showResult() {
+            ws.send("#showResult");
         }
 
 
