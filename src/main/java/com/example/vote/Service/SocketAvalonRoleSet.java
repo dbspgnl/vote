@@ -36,11 +36,9 @@ public class SocketAvalonRoleSet extends TextWebSocketHandler {
 	public void handleTextMessage(WebSocketSession session, TextMessage message) {
 		String payload = message.getPayload();
 		Map<String, String> mapData = new HashMap<>();
-		// List<String> list = new ArrayList<>();
+		
 		try {	
             
-            // System.out.println(payload);
-
 			if(payload.equals("#reset")){
 				this.assasin = "";
 				this.merlin = "";
@@ -55,8 +53,6 @@ public class SocketAvalonRoleSet extends TextWebSocketHandler {
 				String split1 = payload.split("myRoleNumber=")[1];
 				String roleNumStr = split1.split("&name=")[0];
 				String name = split1.split("&name=")[1];
-				// System.out.println(roleNumStr);
-				// System.out.println(name);
 				
 				switch (roleNumStr) {
 					case "1": //멀린
@@ -87,7 +83,6 @@ public class SocketAvalonRoleSet extends TextWebSocketHandler {
 			}
 			
 			if(payload.equals("#showResult")){
-				// System.out.println("역할군 담기 시도");
 				mapData.put("result", "true");
 				mapData.put("merlin", this.merlin);
 				mapData.put("percival", this.percival);
