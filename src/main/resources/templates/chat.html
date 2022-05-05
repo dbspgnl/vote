@@ -24,6 +24,10 @@
         <div>
             <p id="chat"></p>
         </div>
+        <img src="/img/agree.png" alt="#" width="100">
+        <video controls width="400">
+            <source src="/video/Seoul.mp4" type="video/mp4">
+        </video>
     </div>
 
     <script type="text/javascript">
@@ -43,7 +47,8 @@
             $('#chatting').val("");
         }
 
-
+        const vid = document.querySelector('video');
+        vid.currentTime = 10;
 
     </script>
     

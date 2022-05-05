@@ -32,4 +32,9 @@ public class MainController {
         return "avalonRoleSet";
     }
 
+    @RequestMapping(value = "/screenShare")
+    public String screenShare() {
+        return "screenShare";
+    }
+
 }
