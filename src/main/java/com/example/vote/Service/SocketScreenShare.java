@@ -1,8 +1,12 @@
 package com.example.vote.Service;
 
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.util.HashMap;
 
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -16,22 +20,31 @@ import lombok.RequiredArgsConstructor;
 public class SocketScreenShare extends TextWebSocketHandler {
 
 	HashMap<String, WebSocketSession> sessions = new HashMap<>();
-	// HashMap<String, String> mapData = new HashMap<>();
+	HashMap<String, Object> mapData = new HashMap<String, Object>();
 	String messageString = "";
 
 	// client에서 메시지가 서버로 전송댈때 실행되는 함수.
 	@Override
-	public void handleTextMessage(WebSocketSession session, TextMessage message) {
+	public void handleTextMessage(WebSocketSession session, TextMessage message) throws ParseException {
 		String payload = message.getPayload();
-
+		JSONObject json = jsonToObjectParser(payload); 
+		
 		try {
-			System.out.println("chat: "+payload);
-			// mapData.put("data", payload);
-			messageString = "{ \"data\":\""+payload+"\"}";
+			
+			HashMap<String, Object> hashMap = new HashMap<>();
+			hashMap.put("data", json);
+			hashMap.put("playing", false);
+			hashMap.put("streamable_url", "get_streamable_url(youtube_url)");
+			hashMap.put("last_updated", new Timestamp(System.currentTimeMillis()).toString());
+			hashMap.put("global_time", 0);
+			hashMap.put("client_uid", sessions.keySet().toString());
+					
+			JSONObject jsonObject = new JSONObject(hashMap);
+			// System.out.println(jsonObject.toJSONString());
 			
 			for (String key : sessions.keySet()) {
 				WebSocketSession ss = sessions.get(key);
-				ss.sendMessage(new TextMessage(messageString));
+				ss.sendMessage(new TextMessage(jsonObject.toJSONString()));
 			}
 
 		} catch (IOException e) {
@@ -53,6 +66,17 @@ public class SocketScreenShare extends TextWebSocketHandler {
 		sessions.remove(session.getId());
 		super.afterConnectionClosed(session, status);
 
+	}
+
+	private static JSONObject jsonToObjectParser(String jsonStr) {
+		JSONParser parser = new JSONParser();
+		JSONObject obj = null;
+		try {
+			obj = (JSONObject) parser.parse(jsonStr);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return obj;
 	}
 
 }
