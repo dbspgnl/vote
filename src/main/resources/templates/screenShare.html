@@ -15,12 +15,6 @@
         <div>
             <p><h1>화면 공유 테스트</h1></p>
         </div>
-        <!-- <div>
-            <button class="btn btn-warning" onclick="connectWs()" id="startBtn"> 시작하기</button>
-        </div> -->
-        <br/>
-        <div>메시지: </div><input id="chatting"></input>&nbsp;&nbsp;<button class="btn btn-success" onclick="send()">보내기 </button>
-        <hr/>
 
         <video controls width="400">
             <source src="/video/Seoul.mp4" type="video/mp4">
@@ -47,83 +41,48 @@
         let over_estimate = 0
         let under_estimate = 0
         let correction = 0
-
+        // 소켓
         var ws;
-        var beforeTime;
+        // 추가
+        // let video_shareTime = 0;
+
         function connectWs() {
             console.log("커넥트");
             ws = new WebSocket('ws://' + location.host + '/screenShare/message');
+            
             ws.onmessage = function(data) { // 서버에서의 리턴 값 처리
                 $("<p>시간체크: "+data.data+"</p>").prependTo('#chat');
 
-                // 시간을 Json으로 처리해야할듯
-                var state = JSON.parse(data.data); // 시간
-                console.log(JSON.parse(data.data)); // {data: '1'}
-                console.log(state.data); // 1
+                // Json 파싱
+                var state = JSON.parse(data.data); 
+                console.log(JSON.parse(data.data)); 
                 
-                // 만약 실행중이라면 중지해서 처리해야함
-
-                // 만약 중지중이면 실행 시켜야함
+                // 내 비디오 상태 체크
+                if (vid.paused) { 
+                    video_playing = false
+                } else { 
+                    video_playing = true
+                }
                 
-                if(Math.floor(vid.currentTime) != Math.floor(state)){
-                    console.log(data);
-                    console.log("state: "+state);
-                    console.log("beforeTime: "+beforeTime);
-                    if(state - beforeTime > 1){
-                        vid.currentTime = state
-                        vid.play()
-                    }
-                    
+                // 변경에 의한 서버의 시간 조정 요청
+                if(Math.floor(vid.currentTime) != Math.floor(state.video_timestamp)){
+                    vid.currentTime = state.video_timestamp;
                 }
 
+                // 서버의 요청에 의한 실행/중지 처리
+                if (video_playing && !state.playing) {
+                    vid.pause();
+                }
+                else if(!video_playing && state.playing){
+                    vidPlay();
+                }
                 
-                // if (client_uid == null){
-                //     client_uid = state.client_uid;
-                // }
-
-                // // someone changed the video
-                // if (vid_src.src !== state.streamable_url){ // 현재 비디오 src랑 서버의 src랑 다를 경우
-                //     vid.pause()
-                //     // raw_url = state.raw_url
-                //     // streamable_url = state.streamable_url
-                //     // vid_src.src = streamable_url 
-                //     vid.load()
-                // } 
-
-                // // let proposed_time = (state.playing) ? ((state.video_timestamp - state.global_timestamp) + get_global_time(correction) ) : (state.video_timestamp)
-                // // let gap = Math.abs(proposed_time - vid.currentTime)
-                // // console.log(`%cGap was ${proposed_time - vid.currentTime}`, 'font-size:12px; color:purple')
-
-                // if (state.playing){
-                //     if(gap > PLAYING_THRESH){
-                //         // tolerance while the video is playing
-                //         vid.currentTime = state
-                //     }
-                //     vid.play()
-                // }
-                // else{
-                //     vid.pause()
-                //     if (gap > PAUSED_THRESH){
-                //         // condition to prevent an unnecessary seek
-                //         vid.currentTime = state
-                //     }
-                // }
-
-
             }
-
-
         }
 
-        function send() {
-            ws.send($("#chatting").val());
-            $('#chatting').val("");
-        }
-
+        // 시작부
         const vid = document.querySelector('video');
-        vid.currentTime = 1;
         connectWs(); // 소켓 시작
-        beforeTime = 1;
 
         vid.onended = () => {
             console.log("영상 종료");
@@ -132,36 +91,34 @@
             // vid.load()
             // state_change_handler()
         }
+
         vid.oncanplay = () => {
-            console.log("oncanplay: "+vid.currentTime);
-            beforeTime = vid.currentTime;
-            // ws.send(vid.currentTime);
-            ws.send(JSON.stringify({video_timestamp: vid.currentTime}))
+            console.log("영상 조작에 의한 이벤트 발생.");
+            state_change_handler();
         }
 
         let state_change_handler = (event) => {
-            if (event !== null && event !== undefined){
-                if (event.type === 'pause'){
-                    video_playing = false
-                }
-                else if (event.type === 'play'){
-                    video_playing = true
-                }
+            if (vid.paused) { 
+                video_playing = false
+            } else { 
+                video_playing = true
             }
+
             last_updated = get_global_time(correction)
             state_image = {
                 video_timestamp: vid.currentTime,
                 last_updated: last_updated,
                 playing: video_playing,
                 global_timestamp: get_global_time(correction),
-                raw_url : raw_url,
-                streamable_url: streamable_url,
-                client_uid: client_uid
+                // raw_url : raw_url,
+                // streamable_url: streamable_url,
+                client_uid: client_uid,
+                video_shareTime: vid.currentTime
             }
             // socket.emit("state_update_from_client", state_image)
             // ws.send('{ "playing": "true", "payload": "aaa" }');
             ws.send(JSON.stringify(state_image))
-           
+
         }
 
         // assigning event handlers
@@ -174,6 +131,23 @@
             let t = d.getTime()/1000
             // delta is the correction parameter
             return t + delta
+        }
+
+        function vidPlay() {
+            const promise = vid.play();
+            if(promise !== undefined){
+                promise.then(() => {
+                    // Autoplay started
+                }).catch(error => {
+                    // Autoplay was prevented.
+                    vid.muted = true;
+                    vid.play();
+                });
+            }
+        }
+
+        function vidServCont(params) {
+            
         }
 
     </script>
